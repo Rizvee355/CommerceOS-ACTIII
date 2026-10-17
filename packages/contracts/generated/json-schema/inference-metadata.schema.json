@@ -1,0 +1,89 @@
+{
+  "$id": "https://commerceos.dev/contracts/v1/inference-metadata.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "adapterVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "durationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "generatedAt": {
+          "description": "RFC 3339 timestamp assigned by the server",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+          "type": "string"
+        },
+        "modelId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "provenance": {
+          "enum": [
+            "live",
+            "synthetic_mock"
+          ],
+          "type": "string"
+        },
+        "providerId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "const": "available",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "providerId",
+        "modelId",
+        "adapterVersion",
+        "generatedAt",
+        "durationMs",
+        "provenance"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "providerId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reasonCode": {
+          "enum": [
+            "configuration",
+            "malformed_output",
+            "provider_unavailable",
+            "rate_limited",
+            "timeout"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "const": "unavailable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reasonCode"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "InferenceMetadata",
+  "x-commerceos-runtime-validation": true
+}

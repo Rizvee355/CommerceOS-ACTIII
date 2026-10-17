@@ -1,0 +1,34 @@
+{
+  "$id": "https://commerceos.dev/contracts/v1/evidence-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "evidenceId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "factPath": {
+      "format": "starts_with",
+      "maxLength": 512,
+      "pattern": "^\\/.*",
+      "type": "string"
+    },
+    "sourceKind": {
+      "enum": [
+        "validated_input",
+        "deterministic_rule",
+        "synthetic_fixture"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidenceId",
+    "factPath",
+    "sourceKind"
+  ],
+  "title": "EvidenceRef",
+  "type": "object",
+  "x-commerceos-runtime-validation": true
+}

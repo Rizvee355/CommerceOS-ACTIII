@@ -1,0 +1,298 @@
+{
+  "$id": "https://commerceos.dev/contracts/v1/analysis-response-envelope.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aiRecommendation": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "additionalProperties": {},
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "evidenceRefs": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 128,
+          "minItems": 1,
+          "type": "array"
+        },
+        "reasoningSummary": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "reasoningSummary",
+        "evidenceRefs"
+      ],
+      "type": "object"
+    },
+    "analysisStatus": {
+      "enum": [
+        "complete",
+        "limited",
+        "needs_review"
+      ],
+      "type": "string"
+    },
+    "deterministic": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "additionalProperties": {},
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "evidenceRefs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "evidenceId": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              "factPath": {
+                "format": "starts_with",
+                "maxLength": 512,
+                "pattern": "^\\/.*",
+                "type": "string"
+              },
+              "sourceKind": {
+                "enum": [
+                  "validated_input",
+                  "deterministic_rule",
+                  "synthetic_fixture"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "evidenceId",
+              "factPath",
+              "sourceKind"
+            ],
+            "type": "object"
+          },
+          "maxItems": 128,
+          "type": "array"
+        },
+        "rulesetVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "rulesetVersion",
+        "evidenceRefs"
+      ],
+      "type": "object"
+    },
+    "humanReview": {
+      "additionalProperties": false,
+      "properties": {
+        "decidedBy": {
+          "const": "deterministic_policy",
+          "type": "string"
+        },
+        "policyVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reasonCodes": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "type": "array"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "required",
+        "reasonCodes",
+        "decidedBy",
+        "policyVersion"
+      ],
+      "type": "object"
+    },
+    "inference": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "adapterVersion": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "durationMs": {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "generatedAt": {
+              "description": "RFC 3339 timestamp assigned by the server",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+              "type": "string"
+            },
+            "modelId": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "provenance": {
+              "enum": [
+                "live",
+                "synthetic_mock"
+              ],
+              "type": "string"
+            },
+            "providerId": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "status": {
+              "const": "available",
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "providerId",
+            "modelId",
+            "adapterVersion",
+            "generatedAt",
+            "durationMs",
+            "provenance"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "providerId": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "reasonCode": {
+              "enum": [
+                "configuration",
+                "malformed_output",
+                "provider_unavailable",
+                "rate_limited",
+                "timeout"
+              ],
+              "type": "string"
+            },
+            "status": {
+              "const": "unavailable",
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "reasonCode"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "receivedAt": {
+          "description": "RFC 3339 timestamp assigned by the server",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+          "type": "string"
+        },
+        "requestId": {
+          "description": "Server-generated UUID",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        },
+        "respondedAt": {
+          "description": "RFC 3339 timestamp assigned by the server",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+          "type": "string"
+        },
+        "traceId": {
+          "description": "Server-generated UUID",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId",
+        "traceId",
+        "receivedAt",
+        "respondedAt"
+      ],
+      "type": "object"
+    },
+    "moduleId": {
+      "enum": [
+        "promiseguard",
+        "marginleak"
+      ],
+      "type": "string"
+    },
+    "scenario": {
+      "additionalProperties": false,
+      "properties": {
+        "scenarioId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "synthetic": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "scenarioId",
+        "synthetic"
+      ],
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "moduleId",
+    "analysisStatus",
+    "metadata",
+    "humanReview"
+  ],
+  "title": "AnalysisResponseEnvelope",
+  "type": "object",
+  "x-commerceos-runtime-validation": true
+}

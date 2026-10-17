@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0",
+  "moduleId": "promiseguard",
+  "scenario": {
+    "scenarioId": "pg-indeterminate",
+    "synthetic": true
+  },
+  "fulfillmentRef": "FUL-SYN-003",
+  "commitment": {
+    "evidenceId": "ev-commitment-003",
+    "kind": "dispatch_by",
+    "dispatchBy": "2026-10-15T15:00:00.000Z"
+  },
+  "operationalEvidence": {
+    "inventoryAllocation": {
+      "evidenceId": "ev-inventory-003",
+      "origin": "synthetic_fixture",
+      "observedAt": "2026-10-15T08:30:00.000Z",
+      "validUntil": null,
+      "status": "unknown"
+    },
+    "fulfillmentState": {
+      "evidenceId": "ev-fulfillment-003",
+      "origin": "synthetic_fixture",
+      "observedAt": "2026-10-15T08:35:00.000Z",
+      "validUntil": "2026-10-15T15:30:00.000Z",
+      "state": "in_progress"
+    },
+    "blockingState": {
+      "evidenceId": "ev-blocker-003",
+      "origin": "synthetic_fixture",
+      "observedAt": "2026-10-15T08:40:00.000Z",
+      "validUntil": null,
+      "status": "unknown",
+      "codes": []
+    }
+  }
+}

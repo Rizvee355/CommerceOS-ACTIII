@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "requestId": "52dd0dc8-dcd2-4131-85ec-c14a9af75e88",
+  "traceId": "90c3d1ef-97ee-454d-92ce-5e16609ae170",
+  "timestamp": "2026-10-15T00:00:00.000Z",
+  "error": {
+    "code": "INVALID_REQUEST",
+    "category": "validation",
+    "message": "The request did not match the approved contract.",
+    "retryable": false,
+    "fieldErrors": [
+      {
+        "path": "/schemaVersion",
+        "code": "invalid_literal",
+        "message": "Expected schema version 1.0."
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "$id": "https://commerceos.dev/contracts/v1/capability-status.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "maxLength": 280,
+      "minLength": 1,
+      "type": "string"
+    },
+    "id": {
+      "enum": [
+        "promiseguard",
+        "marginleak",
+        "rescuecart"
+      ],
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
+    "routes": {
+      "items": {
+        "format": "starts_with",
+        "pattern": "^\\/.*",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "type": "array"
+    },
+    "state": {
+      "enum": [
+        "planned",
+        "stub",
+        "active",
+        "disabled"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "description",
+    "state",
+    "routes"
+  ],
+  "title": "CapabilityStatus",
+  "type": "object",
+  "x-commerceos-runtime-validation": true
+}

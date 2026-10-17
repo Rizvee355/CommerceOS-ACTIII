@@ -1,0 +1,52 @@
+{
+  "name": "commerceos",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rizvee355/CommerceOS-ACTIII.git"
+  },
+  "type": "module",
+  "description": "Unified commerce intelligence foundation for AMD ACT III",
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": "24.16.0",
+    "pnpm": "12.4.2"
+  },
+  "scripts": {
+    "build": "pnpm --filter @commerceos/app build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm contracts:check && pnpm test && pnpm build && pnpm security:secrets",
+    "contracts:check": "pnpm --filter @commerceos/contracts generate:check",
+    "contracts:generate": "pnpm --filter @commerceos/contracts generate",
+    "dev": "pnpm --filter @commerceos/app dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "security:deps": "pnpm audit --prod --audit-level high",
+    "security:secrets": "node scripts/scan-secrets.mjs",
+    "start": "pnpm --filter @commerceos/app start",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@tailwindcss/postcss": "4.3.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "5.0.3",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.0",
+    "jsdom": "30.1.2",
+    "prettier": "3.9.10",
+    "tailwindcss": "4.3.2",
+    "tsx": "4.23.15",
+    "typescript": "6.0.2",
+    "vitest": "5.0.3"
+  }
+}

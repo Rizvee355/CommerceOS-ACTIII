@@ -1,0 +1,22 @@
+{
+  "$id": "https://commerceos.dev/contracts/v1/scenario-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "scenarioId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "synthetic": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "scenarioId",
+    "synthetic"
+  ],
+  "title": "ScenarioRef",
+  "type": "object",
+  "x-commerceos-runtime-validation": true
+}

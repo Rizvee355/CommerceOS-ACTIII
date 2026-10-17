@@ -1,0 +1,187 @@
+{
+  "prototypeVersion": "g4a.1",
+  "moduleId": "marginleak",
+  "scope": "single_order_contribution_margin_variance",
+  "scenario": { "scenarioId": "ml-leak-detected", "synthetic": true },
+  "orderRef": "ORDER-SYN-LEAK",
+  "currency": "USD",
+  "observationState": "final",
+  "financials": {
+    "grossItemRevenue": {
+      "expected": {
+        "amountMinor": 10000,
+        "currency": "USD",
+        "evidenceId": "ld-gross-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected gross item revenue",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 9800,
+        "currency": "USD",
+        "evidenceId": "ld-gross-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed gross item revenue",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    },
+    "shippingRevenue": {
+      "expected": {
+        "amountMinor": 1000,
+        "currency": "USD",
+        "evidenceId": "ld-shipping-revenue-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected shipping revenue",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 1000,
+        "currency": "USD",
+        "evidenceId": "ld-shipping-revenue-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed shipping revenue",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    },
+    "discounts": {
+      "expected": {
+        "amountMinor": 500,
+        "currency": "USD",
+        "evidenceId": "ld-discounts-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected discounts",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 600,
+        "currency": "USD",
+        "evidenceId": "ld-discounts-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed discounts",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    },
+    "cogs": {
+      "expected": {
+        "amountMinor": 4000,
+        "currency": "USD",
+        "evidenceId": "ld-cogs-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected COGS",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 4000,
+        "currency": "USD",
+        "evidenceId": "ld-cogs-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed COGS",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    },
+    "shippingCost": {
+      "expected": {
+        "amountMinor": 800,
+        "currency": "USD",
+        "evidenceId": "ld-shipping-cost-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected shipping cost",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 1000,
+        "currency": "USD",
+        "evidenceId": "ld-shipping-cost-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed shipping cost",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    },
+    "fulfillmentCost": {
+      "expected": {
+        "amountMinor": 300,
+        "currency": "USD",
+        "evidenceId": "ld-fulfillment-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected fulfillment cost",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 300,
+        "currency": "USD",
+        "evidenceId": "ld-fulfillment-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed fulfillment cost",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    },
+    "paymentCost": {
+      "expected": {
+        "amountMinor": 300,
+        "currency": "USD",
+        "evidenceId": "ld-payment-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected payment cost",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 350,
+        "currency": "USD",
+        "evidenceId": "ld-payment-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed payment cost",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    },
+    "platformCost": {
+      "expected": {
+        "amountMinor": 200,
+        "currency": "USD",
+        "evidenceId": "ld-platform-expected",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Expected platform cost",
+          "recordedAt": "2026-10-16T08:00:00.000Z"
+        }
+      },
+      "observed": {
+        "amountMinor": 200,
+        "currency": "USD",
+        "evidenceId": "ld-platform-observed",
+        "source": {
+          "kind": "synthetic_fixture",
+          "label": "Observed platform cost",
+          "recordedAt": "2026-10-16T09:00:00.000Z"
+        }
+      }
+    }
+  }
+}

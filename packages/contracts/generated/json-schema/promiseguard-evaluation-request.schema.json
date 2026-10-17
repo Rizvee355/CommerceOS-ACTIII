@@ -1,0 +1,303 @@
+{
+  "$id": "https://commerceos.dev/contracts/v1/promiseguard-evaluation-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "commitment": {
+      "additionalProperties": false,
+      "properties": {
+        "dispatchBy": {
+          "description": "RFC 3339 UTC timestamp",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+          "type": "string"
+        },
+        "evidenceId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "type": "string"
+        },
+        "kind": {
+          "const": "dispatch_by",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidenceId",
+        "kind",
+        "dispatchBy"
+      ],
+      "type": "object"
+    },
+    "fulfillmentRef": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+      "type": "string"
+    },
+    "moduleId": {
+      "const": "promiseguard",
+      "type": "string"
+    },
+    "operationalEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "blockingState": {
+          "additionalProperties": false,
+          "properties": {
+            "codes": {
+              "items": {
+                "enum": [
+                  "inventory_shortage",
+                  "fulfillment_hold",
+                  "capacity_constraint",
+                  "cutoff_missed",
+                  "other_operational_blocker"
+                ],
+                "type": "string"
+              },
+              "maxItems": 8,
+              "type": "array"
+            },
+            "evidenceId": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            "observedAt": {
+              "description": "RFC 3339 UTC timestamp",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+              "type": "string"
+            },
+            "origin": {
+              "const": "synthetic_fixture",
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "none_known",
+                "active",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            "validUntil": {
+              "anyOf": [
+                {
+                  "description": "RFC 3339 UTC timestamp",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "evidenceId",
+            "origin",
+            "observedAt",
+            "validUntil",
+            "status",
+            "codes"
+          ],
+          "type": "object"
+        },
+        "fulfillmentState": {
+          "additionalProperties": false,
+          "properties": {
+            "evidenceId": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            "observedAt": {
+              "description": "RFC 3339 UTC timestamp",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+              "type": "string"
+            },
+            "origin": {
+              "const": "synthetic_fixture",
+              "type": "string"
+            },
+            "state": {
+              "enum": [
+                "not_started",
+                "in_progress",
+                "ready",
+                "blocked",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            "validUntil": {
+              "anyOf": [
+                {
+                  "description": "RFC 3339 UTC timestamp",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "evidenceId",
+            "origin",
+            "observedAt",
+            "validUntil",
+            "state"
+          ],
+          "type": "object"
+        },
+        "inventoryAllocation": {
+          "additionalProperties": false,
+          "properties": {
+            "evidenceId": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            "observedAt": {
+              "description": "RFC 3339 UTC timestamp",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+              "type": "string"
+            },
+            "origin": {
+              "const": "synthetic_fixture",
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "secured",
+                "not_secured",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            "validUntil": {
+              "anyOf": [
+                {
+                  "description": "RFC 3339 UTC timestamp",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "evidenceId",
+            "origin",
+            "observedAt",
+            "validUntil",
+            "status"
+          ],
+          "type": "object"
+        },
+        "readyTimeEstimate": {
+          "additionalProperties": false,
+          "properties": {
+            "estimatedReadyAt": {
+              "description": "RFC 3339 UTC timestamp",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+              "type": "string"
+            },
+            "evidenceId": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            "observedAt": {
+              "description": "RFC 3339 UTC timestamp",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+              "type": "string"
+            },
+            "origin": {
+              "const": "synthetic_fixture",
+              "type": "string"
+            },
+            "validUntil": {
+              "anyOf": [
+                {
+                  "description": "RFC 3339 UTC timestamp",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "evidenceId",
+            "origin",
+            "observedAt",
+            "validUntil",
+            "estimatedReadyAt"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "inventoryAllocation",
+        "fulfillmentState",
+        "blockingState"
+      ],
+      "type": "object"
+    },
+    "scenario": {
+      "additionalProperties": false,
+      "properties": {
+        "scenarioId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "synthetic": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "scenarioId",
+        "synthetic"
+      ],
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "moduleId",
+    "scenario",
+    "fulfillmentRef",
+    "commitment",
+    "operationalEvidence"
+  ],
+  "title": "PromiseGuardEvaluationRequest",
+  "type": "object",
+  "x-commerceos-runtime-validation": true
+}

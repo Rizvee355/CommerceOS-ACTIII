@@ -1,0 +1,8 @@
+submission-assets/
+docs/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+coverage/
+playwright-report/
+test-results/

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2.0",
+  "moduleId": "promiseguard",
+  "analysisStatus": "complete",
+  "metadata": {
+    "requestId": "52dd0dc8-dcd2-4131-85ec-c14a9af75e88",
+    "traceId": "90c3d1ef-97ee-454d-92ce-5e16609ae170",
+    "receivedAt": "2026-10-15T00:00:00.000Z",
+    "respondedAt": "2026-10-15T00:00:00.010Z"
+  },
+  "humanReview": {
+    "required": false,
+    "reasonCodes": [],
+    "decidedBy": "deterministic_policy",
+    "policyVersion": "foundation-1"
+  }
+}

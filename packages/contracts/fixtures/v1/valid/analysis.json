@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "moduleId": "promiseguard",
+  "analysisStatus": "complete",
+  "metadata": {
+    "requestId": "52dd0dc8-dcd2-4131-85ec-c14a9af75e88",
+    "traceId": "90c3d1ef-97ee-454d-92ce-5e16609ae170",
+    "receivedAt": "2026-10-15T00:00:00.000Z",
+    "respondedAt": "2026-10-15T00:00:00.010Z"
+  },
+  "scenario": {
+    "scenarioId": "foundation-success",
+    "synthetic": true
+  },
+  "deterministic": {
+    "data": {
+      "fixture": "foundation-only"
+    },
+    "rulesetVersion": "foundation-1",
+    "evidenceRefs": [
+      {
+        "evidenceId": "evidence-1",
+        "factPath": "/scenario/scenarioId",
+        "sourceKind": "synthetic_fixture"
+      }
+    ]
+  },
+  "humanReview": {
+    "required": false,
+    "reasonCodes": [],
+    "decidedBy": "deterministic_policy",
+    "policyVersion": "foundation-1"
+  },
+  "inference": {
+    "status": "available",
+    "providerId": "deterministic-mock",
+    "modelId": "fixture-v1",
+    "adapterVersion": "1.0.0",
+    "generatedAt": "2026-10-15T00:00:00.005Z",
+    "durationMs": 5,
+    "provenance": "synthetic_mock"
+  },
+  "aiRecommendation": {
+    "data": {
+      "fixture": "synthetic-only"
+    },
+    "reasoningSummary": "Synthetic recommendation used only to verify the shared boundary.",
+    "evidenceRefs": ["evidence-1"]
+  }
+}

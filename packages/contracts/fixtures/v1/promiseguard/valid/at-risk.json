@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "moduleId": "promiseguard",
+  "scenario": {
+    "scenarioId": "pg-at-risk",
+    "synthetic": true
+  },
+  "fulfillmentRef": "FUL-SYN-002",
+  "commitment": {
+    "evidenceId": "ev-commitment-002",
+    "kind": "dispatch_by",
+    "dispatchBy": "2026-10-15T14:00:00.000Z"
+  },
+  "operationalEvidence": {
+    "inventoryAllocation": {
+      "evidenceId": "ev-inventory-002",
+      "origin": "synthetic_fixture",
+      "observedAt": "2026-10-15T08:30:00.000Z",
+      "validUntil": "2026-10-15T14:30:00.000Z",
+      "status": "not_secured"
+    },
+    "fulfillmentState": {
+      "evidenceId": "ev-fulfillment-002",
+      "origin": "synthetic_fixture",
+      "observedAt": "2026-10-15T08:35:00.000Z",
+      "validUntil": "2026-10-15T14:30:00.000Z",
+      "state": "blocked"
+    },
+    "blockingState": {
+      "evidenceId": "ev-blocker-002",
+      "origin": "synthetic_fixture",
+      "observedAt": "2026-10-15T08:40:00.000Z",
+      "validUntil": "2026-10-15T14:30:00.000Z",
+      "status": "active",
+      "codes": ["inventory_shortage"]
+    },
+    "readyTimeEstimate": {
+      "evidenceId": "ev-estimate-002",
+      "origin": "synthetic_fixture",
+      "observedAt": "2026-10-15T08:45:00.000Z",
+      "validUntil": "2026-10-15T14:30:00.000Z",
+      "estimatedReadyAt": "2026-10-15T17:00:00.000Z"
+    }
+  }
+}
