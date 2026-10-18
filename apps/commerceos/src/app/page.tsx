@@ -2,10 +2,29 @@ import Link from "next/link";
 import { SiteHeader } from "../components/site-header";
 import { moduleRegistry } from "../features/module-registry";
 
+const amdStatus = {
+  heading: "AMD Token Factory — Integration Verified",
+  description:
+    "Authenticated AMD Token Factory inference and PromiseGuard advisory integration have been verified in a controlled environment. Public live inference remains disabled to protect access credentials and shared API quotas.",
+  integrationSummary: "Verified · gated",
+  indicators: [
+    { label: "AMD API", value: "Verified" },
+    {
+      label: "PromiseGuard AI Integration",
+      value: "Verified in controlled testing",
+    },
+    { label: "Public AI Availability", value: "Disabled" },
+  ],
+} as const;
+
 const readiness = [
   { label: "Architecture", value: "Approved", tone: "ready" },
   { label: "Shared contracts", value: "Foundation v1", tone: "ready" },
-  { label: "AMD inference", value: "Verified · gated", tone: "ready" },
+  {
+    label: "AMD inference",
+    value: amdStatus.integrationSummary,
+    tone: "ready",
+  },
 ] as const;
 
 const titleCase = (value: string): string =>
@@ -83,13 +102,16 @@ export default function HomePage() {
               ⌁
             </span>
             <div>
-              <h2>AMD integration verified</h2>
-              <p>
-                Authenticated Token Factory inference and the server-side
-                PromiseGuard advisory path are verified with synthetic data.
-                Public Token Factory access remains disabled until a separate
-                access-control and deployment approval.
-              </p>
+              <h2>{amdStatus.heading}</h2>
+              <p>{amdStatus.description}</p>
+              <dl className="verification-status-list">
+                {amdStatus.indicators.map((indicator) => (
+                  <div key={indicator.label}>
+                    <dt>{indicator.label}</dt>
+                    <dd>{indicator.value}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </article>
           <article className="state-panel">

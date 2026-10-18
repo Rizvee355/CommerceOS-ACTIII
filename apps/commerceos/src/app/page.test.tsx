@@ -25,10 +25,29 @@ describe("CommerceOS overview", () => {
     expect(within(rescueCart).getByText("Disabled")).toBeInTheDocument();
     expect(within(rescueCart).queryByRole("link")).not.toBeInTheDocument();
 
-    expect(screen.getByText("AMD integration verified")).toBeInTheDocument();
     expect(
-      screen.getByText(/Public Token Factory access remains disabled/i),
+      screen.getByRole("heading", {
+        name: "AMD Token Factory — Integration Verified",
+      }),
     ).toBeInTheDocument();
+    expect(screen.getByText("AMD API")).toBeInTheDocument();
+    expect(
+      screen.getByText("Verified", { selector: "dd" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("PromiseGuard AI Integration")).toBeInTheDocument();
+    expect(
+      screen.getByText("Verified in controlled testing"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Public AI Availability")).toBeInTheDocument();
+    expect(
+      screen.getByText("Disabled", { selector: "dd" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Public live inference remains disabled/i),
+    ).toBeInTheDocument();
+    expect(document.body).not.toHaveTextContent(
+      /AMD connection pending|API access not issued|AMD inference never verified|authentication blocked|awaiting Token Factory authorization/i,
+    );
     expect(screen.getByText("Synthetic preview available")).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /Open synthetic workspace/i }),

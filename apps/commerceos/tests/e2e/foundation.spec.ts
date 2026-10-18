@@ -18,9 +18,24 @@ test("foundation shell and approved APIs are available", async ({
   await expect(page.getByTestId("capability-rescuecart")).toContainText(
     "Disabled",
   );
-  await expect(page.getByText("AMD integration verified")).toBeVisible();
+  const amdStatus = page
+    .getByRole("heading", {
+      name: "AMD Token Factory — Integration Verified",
+    })
+    .locator("..");
+  await expect(amdStatus).toBeVisible();
+  await expect(amdStatus.getByText("AMD API")).toBeVisible();
+  await expect(amdStatus.getByText("Verified", { exact: true })).toBeVisible();
   await expect(
-    page.getByText(/Public Token Factory access remains disabled/i),
+    amdStatus.getByText("PromiseGuard AI Integration"),
+  ).toBeVisible();
+  await expect(
+    amdStatus.getByText("Verified in controlled testing"),
+  ).toBeVisible();
+  await expect(amdStatus.getByText("Public AI Availability")).toBeVisible();
+  await expect(amdStatus.getByText("Disabled", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(/Public live inference remains disabled/i),
   ).toBeVisible();
 
   const health = await request.get("/api/v1/health");
