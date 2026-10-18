@@ -143,13 +143,13 @@ describe("PromiseGuard UI components", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders AiPanel with neutral branding for live providers while G0 verification is blocked", () => {
+  it("labels only the authenticated Token Factory adapter as AMD advisory inference", () => {
     render(
       <AiPanel
         inference={{
           status: "available",
           providerId: "amd-token-factory",
-          modelId: "meta/llama-3-70b-instruct",
+          modelId: "self-dploy/DeepSeek-V4-Flash",
           adapterVersion: "1.0",
           generatedAt: "2026-10-15T12:00:00.000Z",
           durationMs: 88,
@@ -158,7 +158,7 @@ describe("PromiseGuard UI components", () => {
       />,
     );
 
-    expect(screen.getByText("Live Inference Provider")).toBeInTheDocument();
+    expect(screen.getByText("AMD Token Factory Advisory")).toBeInTheDocument();
     expect(screen.queryByText(/AMD Instinct/i)).not.toBeInTheDocument();
     expect(screen.queryByText("Synthetic Mock")).not.toBeInTheDocument();
   });
@@ -179,6 +179,9 @@ describe("PromiseGuard UI components", () => {
     );
 
     expect(screen.getByText("Live Inference Provider")).toBeInTheDocument();
+    expect(
+      screen.queryByText("AMD Token Factory Advisory"),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText(/AMD Instinct/i)).not.toBeInTheDocument();
     expect(screen.queryByText("Synthetic Mock")).not.toBeInTheDocument();
   });

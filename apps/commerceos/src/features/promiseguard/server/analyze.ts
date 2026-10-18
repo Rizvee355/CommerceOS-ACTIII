@@ -62,49 +62,79 @@ const actionIsCompatible = (
   }
 };
 
+const promiseGuardActionCodes: readonly PromiseGuardActionCode[] = [
+  "resolve_identified_blocker",
+  "verify_inventory_allocation",
+  "obtain_current_readiness_estimate",
+  "reassess_customer_facing_commitment",
+  "escalate_to_fulfillment_lead",
+];
+
+const evidenceIdsForAction = (
+  actionCode: PromiseGuardActionCode,
+  request: PromiseGuardEvaluationRequest,
+  deterministic: ReturnType<typeof evaluatePromiseGuard>["deterministic"],
+): ReadonlySet<string> => {
+  const evidence = request.operationalEvidence;
+  switch (actionCode) {
+    case "verify_inventory_allocation":
+      return new Set([evidence.inventoryAllocation.evidenceId]);
+    case "obtain_current_readiness_estimate":
+      return new Set([
+        evidence.fulfillmentState.evidenceId,
+        ...(evidence.readyTimeEstimate
+          ? [evidence.readyTimeEstimate.evidenceId]
+          : []),
+      ]);
+    case "resolve_identified_blocker":
+      return new Set([
+        evidence.blockingState.evidenceId,
+        evidence.fulfillmentState.evidenceId,
+      ]);
+    case "escalate_to_fulfillment_lead":
+      return new Set(
+        deterministic.evidenceRefs.map(({ evidenceId }) => evidenceId),
+      );
+    case "reassess_customer_facing_commitment":
+      return new Set([
+        request.commitment.evidenceId,
+        ...(evidence.readyTimeEstimate
+          ? [evidence.readyTimeEstimate.evidenceId]
+          : []),
+        ...deterministic.data.findings.flatMap((finding) =>
+          finding.impact === "adverse" && finding.trace.kind === "evidence"
+            ? finding.trace.evidenceIds
+            : [],
+        ),
+      ]);
+  }
+};
+
+const allowedActionsFor = (
+  request: PromiseGuardEvaluationRequest,
+  deterministic: ReturnType<typeof evaluatePromiseGuard>["deterministic"],
+) =>
+  promiseGuardActionCodes
+    .filter((actionCode) =>
+      actionIsCompatible(
+        actionCode,
+        deterministic.data.findings,
+        deterministic.data.assessment,
+        request.operationalEvidence.inventoryAllocation.evidenceId,
+      ),
+    )
+    .map((actionCode) => ({
+      actionCode,
+      evidenceIds: [
+        ...evidenceIdsForAction(actionCode, request, deterministic),
+      ],
+    }));
+
 const validateMitigations = (
   output: PromiseGuardAiMitigationOutput,
   request: PromiseGuardEvaluationRequest,
   deterministic: ReturnType<typeof evaluatePromiseGuard>["deterministic"],
 ): void => {
-  const evidenceIdsFor = (
-    actionCode: PromiseGuardActionCode,
-  ): ReadonlySet<string> => {
-    const evidence = request.operationalEvidence;
-    switch (actionCode) {
-      case "verify_inventory_allocation":
-        return new Set([evidence.inventoryAllocation.evidenceId]);
-      case "obtain_current_readiness_estimate":
-        return new Set([
-          evidence.fulfillmentState.evidenceId,
-          ...(evidence.readyTimeEstimate
-            ? [evidence.readyTimeEstimate.evidenceId]
-            : []),
-        ]);
-      case "resolve_identified_blocker":
-        return new Set([
-          evidence.blockingState.evidenceId,
-          evidence.fulfillmentState.evidenceId,
-        ]);
-      case "escalate_to_fulfillment_lead":
-        return new Set(
-          deterministic.evidenceRefs.map(({ evidenceId }) => evidenceId),
-        );
-      case "reassess_customer_facing_commitment":
-        return new Set([
-          request.commitment.evidenceId,
-          ...(evidence.readyTimeEstimate
-            ? [evidence.readyTimeEstimate.evidenceId]
-            : []),
-          ...deterministic.data.findings.flatMap((finding) =>
-            finding.impact === "adverse" && finding.trace.kind === "evidence"
-              ? finding.trace.evidenceIds
-              : [],
-          ),
-        ]);
-    }
-  };
-
   for (const action of output.data.actions) {
     if (
       !actionIsCompatible(
@@ -120,7 +150,11 @@ const validateMitigations = (
         false,
       );
     }
-    const allowedEvidenceIds = evidenceIdsFor(action.actionCode);
+    const allowedEvidenceIds = evidenceIdsForAction(
+      action.actionCode,
+      request,
+      deterministic,
+    );
     if (
       action.evidenceIds.some(
         (evidenceId) => !allowedEvidenceIds.has(evidenceId),
@@ -200,6 +234,7 @@ export const analyzePromiseGuard = async (
           findingCodes: evaluation.deterministic.data.findings.map(
             ({ code }) => code,
           ),
+          allowedActions: allowedActionsFor(request, evaluation.deterministic),
         },
       },
       promiseGuardAiMitigationOutputSchema,

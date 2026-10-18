@@ -32,4 +32,17 @@ describe("secret scanner", () => {
     ]);
     expect(JSON.stringify(findings)).not.toContain(syntheticValue);
   });
+
+  it("detects a bare Token Factory credential without retaining its value", () => {
+    const syntheticValue = ["rc", "A".repeat(48)].join("-");
+    const findings = scanText(
+      "accidental-note.txt",
+      `temporary credential: ${syntheticValue}`,
+    );
+
+    expect(findings).toEqual([
+      { file: "accidental-note.txt", rule: "amd-token-factory-key" },
+    ]);
+    expect(JSON.stringify(findings)).not.toContain(syntheticValue);
+  });
 });

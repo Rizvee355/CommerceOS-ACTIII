@@ -74,6 +74,42 @@ describe("PromiseGuard analysis orchestration", () => {
     ]);
   });
 
+  it("limits live advisory input to deterministic action and evidence candidates", async () => {
+    let capturedInput: Readonly<Record<string, unknown>> | undefined;
+    class CapturingProvider extends DeterministicMockProvider {
+      override async generateStructured<T>(
+        request: InferenceRequest,
+        outputSchema: ZodType<T>,
+      ): Promise<InferenceResult<T>> {
+        capturedInput = request.input;
+        return super.generateStructured(request, outputSchema);
+      }
+    }
+
+    await analyzePromiseGuard(
+      createPromiseGuardPreset("at_risk", receivedAt),
+      dependencies(new CapturingProvider()),
+    );
+
+    expect(capturedInput).toMatchObject({
+      assessment: "at_risk",
+      allowedActions: expect.arrayContaining([
+        {
+          actionCode: "resolve_identified_blocker",
+          evidenceIds: ["ev-blocker-002", "ev-fulfillment-002"],
+        },
+        {
+          actionCode: "verify_inventory_allocation",
+          evidenceIds: ["ev-inventory-002"],
+        },
+        {
+          actionCode: "obtain_current_readiness_estimate",
+          evidenceIds: ["ev-fulfillment-002", "ev-estimate-002"],
+        },
+      ]),
+    });
+  });
+
   it("assigns respondedAt after inference finishes", async () => {
     let providerFinished = false;
     class CompletionAwareProvider extends DeterministicMockProvider {

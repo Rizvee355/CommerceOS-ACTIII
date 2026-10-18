@@ -18,7 +18,10 @@ test("foundation shell and approved APIs are available", async ({
   await expect(page.getByTestId("capability-rescuecart")).toContainText(
     "Disabled",
   );
-  await expect(page.getByText("AMD connection pending")).toBeVisible();
+  await expect(page.getByText("AMD integration verified")).toBeVisible();
+  await expect(
+    page.getByText(/Public Token Factory access remains disabled/i),
+  ).toBeVisible();
 
   const health = await request.get("/api/v1/health");
   expect(health.status()).toBe(200);

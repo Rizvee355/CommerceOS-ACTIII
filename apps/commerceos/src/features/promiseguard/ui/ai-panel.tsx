@@ -50,11 +50,10 @@ export const AiPanel = ({ inference, aiRecommendation }: AiPanelProps) => {
 
   const isSynthetic = inference.provenance === "synthetic_mock";
 
-  // G0 authenticated AMD hardware verification remains blocked. Broad string
-  // prefixes like `amd-*` are strictly disallowed. All live inference providers
-  // receive neutral branding until an exact, verified AMD adapter identity is
-  // approved by the Control Room.
-  const APPROVED_AMD_ADAPTER_ID: string | null = null;
+  // The exact Token Factory adapter identity has authenticated service proof.
+  // This identifies the service, not a specific GPU model; arbitrary `amd-*`
+  // provider identifiers must continue to receive neutral branding.
+  const APPROVED_AMD_ADAPTER_ID = "amd-token-factory";
   const isAuthorizedAmd =
     !isSynthetic &&
     APPROVED_AMD_ADAPTER_ID !== null &&
@@ -63,7 +62,7 @@ export const AiPanel = ({ inference, aiRecommendation }: AiPanelProps) => {
   const providerLabel = isSynthetic
     ? "Synthetic Mock"
     : isAuthorizedAmd
-      ? "AMD Instinct Accelerated"
+      ? "AMD Token Factory Advisory"
       : "Live Inference Provider";
 
   const providerTone = isSynthetic

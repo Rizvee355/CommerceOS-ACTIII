@@ -5,7 +5,7 @@ import { moduleRegistry } from "../features/module-registry";
 const readiness = [
   { label: "Architecture", value: "Approved", tone: "ready" },
   { label: "Shared contracts", value: "Foundation v1", tone: "ready" },
-  { label: "AMD inference", value: "Pending", tone: "waiting" },
+  { label: "AMD inference", value: "Verified · gated", tone: "ready" },
 ] as const;
 
 const titleCase = (value: string): string =>
@@ -26,8 +26,8 @@ export default function HomePage() {
             <p className="hero-summary">
               A unified, contract-first foundation for operational commerce
               decisions. A functional synthetic preview is available for
-              PromiseGuard while production activation and live AMD inference
-              remain pending.
+              PromiseGuard. AMD Token Factory inference is authenticated for a
+              controlled synthetic workflow; public activation remains gated.
             </p>
           </div>
 
@@ -83,10 +83,12 @@ export default function HomePage() {
               ⌁
             </span>
             <div>
-              <h2>AMD connection pending</h2>
+              <h2>AMD integration verified</h2>
               <p>
-                Live Token Factory inference is not activated. The foundation
-                cannot claim AMD availability until authenticated proof exists.
+                Authenticated Token Factory inference and the server-side
+                PromiseGuard advisory path are verified with synthetic data.
+                Public Token Factory access remains disabled until a separate
+                access-control and deployment approval.
               </p>
             </div>
           </article>
@@ -98,8 +100,8 @@ export default function HomePage() {
               <h2>Synthetic preview available</h2>
               <p>
                 PromiseGuard features a functional backend evaluator and
-                synthetic preview route. Production activation, live AMD
-                inference, and persistent workflows remain pending.
+                synthetic preview route. Public AMD activation, merchant
+                integrations, and persistent workflows remain pending.
               </p>
               <p className="state-panel-action">
                 <Link className="text-link" href="/promiseguard">
@@ -112,7 +114,7 @@ export default function HomePage() {
 
         <footer className="site-footer">
           <span>Foundation contract 1.0</span>
-          <span>Private repository · live inference off</span>
+          <span>Public demo · live inference off</span>
         </footer>
       </main>
     </>
