@@ -20,6 +20,10 @@ const rules = [
     pattern:
       /AMD_TOKEN_FACTORY_API_KEY[ \t]*=[ \t]*["']?[A-Za-z0-9][A-Za-z0-9._-]{11,}/g,
   },
+  {
+    name: "amd-token-factory-key",
+    pattern: /\brc-[0-9A-Fa-f]{48}\b/g,
+  },
 ];
 
 export const scanText = (file, content) =>

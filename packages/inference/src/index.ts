@@ -1,6 +1,10 @@
 import type { InferenceMetadata, ScenarioRef } from "@commerceos/contracts";
 import { type ZodType } from "zod";
 
+import { AmdTokenFactoryProvider } from "./amd-token-factory";
+
+export * from "./amd-token-factory";
+
 export type InferenceErrorCode =
   | "INVALID_MOCK_SCENARIO"
   | "INVALID_PROVIDER_CONFIGURATION"
@@ -338,35 +342,49 @@ export type ProviderSelection = {
 };
 
 export type InferenceEnvironment = {
+  AMD_TOKEN_FACTORY_API_KEY?: string;
+  AMD_TOKEN_FACTORY_MODEL?: string;
   INFERENCE_PROVIDER?: string;
   NODE_ENV?: string;
 };
 
 export type AmdTokenFactoryBoundary = {
   provider: "amd-token-factory";
-  activationStatus: "pending_credentials";
+  activationStatus: "authenticated_public_activation_pending";
   officialPlatform: "https://notebooks.amd.com/tokenfactory";
 };
 
 export const amdTokenFactoryBoundary: AmdTokenFactoryBoundary = {
   provider: "amd-token-factory",
-  activationStatus: "pending_credentials",
+  activationStatus: "authenticated_public_activation_pending",
   officialPlatform: "https://notebooks.amd.com/tokenfactory",
 };
 
 export const createInferenceProvider = (
   selection: ProviderSelection,
+  amdConfiguration?: {
+    apiKey?: string;
+    model?: string;
+  },
 ): InferenceProvider | null => {
   if (selection.provider === "disabled") {
     return null;
   }
 
   if (selection.provider === "amd-token-factory") {
-    throw new InferenceProviderError(
-      "LIVE_PROVIDER_NOT_ACTIVATED",
-      "AMD Token Factory is not activated in the G2 foundation.",
-      false,
-    );
+    if (selection.environment === "production") {
+      throw new InferenceProviderError(
+        "LIVE_PROVIDER_NOT_ACTIVATED",
+        "AMD Token Factory production access is not activated.",
+        false,
+      );
+    }
+    return new AmdTokenFactoryProvider({
+      apiKey: amdConfiguration?.apiKey ?? "",
+      ...(amdConfiguration?.model
+        ? { model: amdConfiguration.model }
+        : undefined),
+    });
   }
 
   if (selection.environment === "production") {
@@ -409,8 +427,14 @@ export const initializeInferenceFromEnvironment = (
     );
   }
 
-  return createInferenceProvider({
-    provider,
-    environment: runtimeEnvironment,
-  });
+  return createInferenceProvider(
+    {
+      provider,
+      environment: runtimeEnvironment,
+    },
+    {
+      apiKey: environment.AMD_TOKEN_FACTORY_API_KEY,
+      model: environment.AMD_TOKEN_FACTORY_MODEL,
+    },
+  );
 };

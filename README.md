@@ -43,7 +43,9 @@ Deterministic rules own verdicts, financial calculations, and review decisions. 
 
 ## AMD status
 
-Live AMD inference is **not activated or verified**. The registered event account currently lacks organizer-side Token Factory API-distribution entitlement. The public deployment runs with `INFERENCE_PROVIDER=disabled` and does not claim AMD-generated output.
+Authenticated AMD Token Factory inference and a controlled local PromiseGuard integration are verified with `DeepSeek-V4-Flash`. The server-only adapter accepts only synthetic evidence, validates structured advisory output, and cannot change the deterministic verdict or human-review policy.
+
+The public deployment still runs with `INFERENCE_PROVIDER=disabled`. Production selection of `amd-token-factory` fails closed until a separately approved access-control and deployment design is in place; this source integration is not authentication for a public model endpoint.
 
 ## Local setup
 
@@ -98,7 +100,7 @@ The production browser suite verifies that PromiseGuard remains usable while Mar
 ## Security boundaries
 
 - Never commit credentials, cookies, authorization headers, or raw provider responses.
-- Production inference is disabled; mock inference is not a production fallback.
+- AMD credentials remain server-only; production inference is disabled and mock inference is not a production fallback.
 - CI performs no live provider calls.
 - Monetary values use integer minor units.
 - Missing financial evidence is never coerced to zero.

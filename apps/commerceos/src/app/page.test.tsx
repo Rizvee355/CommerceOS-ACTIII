@@ -25,7 +25,10 @@ describe("CommerceOS overview", () => {
     expect(within(rescueCart).getByText("Disabled")).toBeInTheDocument();
     expect(within(rescueCart).queryByRole("link")).not.toBeInTheDocument();
 
-    expect(screen.getByText("AMD connection pending")).toBeInTheDocument();
+    expect(screen.getByText("AMD integration verified")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Public Token Factory access remains disabled/i),
+    ).toBeInTheDocument();
     expect(screen.getByText("Synthetic preview available")).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /Open synthetic workspace/i }),

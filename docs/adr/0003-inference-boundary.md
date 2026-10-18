@@ -16,3 +16,11 @@ The Next.js server startup hook validates runtime configuration, while the
 production build does not evaluate runtime-only provider selection.
 
 Endpoint, model, headers, authentication, versioning, and payload format remain unresolved until account-issued AMD documentation and authenticated proof are available.
+
+## Mission 018 amendment — 2026-10-18
+
+The organizer-issued Token Factory guide and credential resolved the live-provider boundary. Authenticated proof succeeded against `https://developer.amd.com.cn/radeon/api/v1` using bearer authentication and the catalog-advertised `DeepSeek-V4-Flash` model. CommerceOS now has a server-only `amd-token-factory` adapter for PromiseGuard advisory explanations.
+
+The deterministic evaluator still owns the assessment, findings, and human-review policy. The model receives only validated synthetic findings and pre-authorized action/evidence candidates; its structured response is schema-validated and reconciled before use. There is no live-to-mock fallback.
+
+Public production activation remains denied. `NODE_ENV=production` with `INFERENCE_PROVIDER=amd-token-factory` fails startup until a separate access-control and deployment decision is approved. The public Vercel deployment therefore continues to use `INFERENCE_PROVIDER=disabled`.

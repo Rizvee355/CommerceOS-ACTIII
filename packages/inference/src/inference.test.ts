@@ -3,6 +3,7 @@ import { z } from "zod";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  AmdTokenFactoryProvider,
   createInferenceProvider,
   DeterministicMockProvider,
   initializeInferenceFromEnvironment,
@@ -20,8 +21,53 @@ const request = {
   input: { purpose: "foundation-contract-test" },
 };
 
+const syntheticAmdKey = ["rc", "A".repeat(48)].join("-");
+
+const amdRequest = {
+  ...request,
+  scenario: { scenarioId: "pg-at-risk", synthetic: true as const },
+  input: {
+    assessment: "at_risk",
+    findingCodes: ["ACTIVE_BLOCKER_REPORTED"],
+    findings: [
+      {
+        code: "ACTIVE_BLOCKER_REPORTED",
+        impact: "adverse",
+        trace: {
+          kind: "evidence",
+          evidenceIds: ["ev-blocker-002"],
+        },
+      },
+    ],
+    allowedActions: [
+      {
+        actionCode: "resolve_identified_blocker",
+        evidenceIds: ["ev-blocker-002"],
+      },
+    ],
+  },
+};
+
+const amdOutput = {
+  data: {
+    operationalSummary:
+      "An active fulfillment blocker requires prompt operational review.",
+    actions: [
+      {
+        actionCode: "resolve_identified_blocker",
+        priority: 1,
+        explanation: "Resolve the identified blocker before dispatch.",
+        evidenceIds: ["ev-blocker-002"],
+      },
+    ],
+  },
+  reasoningSummary: "The deterministic evaluation reports an active blocker.",
+  evidenceRefs: ["ev-blocker-002"],
+};
+
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.useRealTimers();
 });
 
 describe("DeterministicMockProvider", () => {
@@ -105,6 +151,224 @@ describe("DeterministicMockProvider", () => {
   });
 });
 
+describe("AmdTokenFactoryProvider", () => {
+  it("sends sanitized synthetic evidence only to the documented AMD endpoint", async () => {
+    const network = vi.fn(
+      async (input: string | URL | Request, init?: RequestInit) => {
+        expect(String(input)).toBe(
+          "https://developer.amd.com.cn/radeon/api/v1/chat/completions",
+        );
+        expect(init?.method).toBe("POST");
+        expect(new Headers(init?.headers).get("authorization")).toBe(
+          `Bearer ${syntheticAmdKey}`,
+        );
+        const body = JSON.parse(String(init?.body)) as {
+          messages: { role: string; content: string }[];
+          model: string;
+          stream: boolean;
+        };
+        expect(body.model).toBe("DeepSeek-V4-Flash");
+        expect(body.stream).toBe(false);
+        expect(body.messages).toHaveLength(2);
+        expect(body.messages[1]?.content).toContain("ACTIVE_BLOCKER_REPORTED");
+        expect(body.messages[1]?.content).not.toContain(request.requestId);
+        expect(body.messages[1]?.content).not.toContain(request.traceId);
+
+        return Response.json({
+          id: "amd-response-001",
+          model: "self-dploy/DeepSeek-V4-Flash",
+          choices: [
+            {
+              finish_reason: "stop",
+              message: {
+                role: "assistant",
+                content: JSON.stringify(amdOutput),
+              },
+            },
+          ],
+          usage: { prompt_tokens: 50, completion_tokens: 40, total_tokens: 90 },
+        });
+      },
+    );
+    const provider = new AmdTokenFactoryProvider({
+      apiKey: syntheticAmdKey,
+      fetch: network,
+      now: () => new Date("2026-10-18T09:57:21.000Z"),
+      monotonicNow: () => 100,
+    });
+
+    const result = await provider.generateStructured(
+      amdRequest,
+      promiseGuardAiMitigationOutputSchema,
+    );
+
+    expect(result.output).toEqual(amdOutput);
+    expect(result.metadata).toEqual({
+      status: "available",
+      providerId: "amd-token-factory",
+      modelId: "self-dploy/DeepSeek-V4-Flash",
+      adapterVersion: "1.0.0",
+      generatedAt: "2026-10-18T09:57:21.000Z",
+      durationMs: 0,
+      provenance: "live",
+    });
+    expect(network).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects non-synthetic scenarios before any network request", async () => {
+    const network = vi.fn();
+    const provider = new AmdTokenFactoryProvider({
+      apiKey: syntheticAmdKey,
+      fetch: network,
+    });
+
+    await expect(
+      provider.generateStructured(
+        {
+          ...amdRequest,
+          scenario: { scenarioId: "real-order", synthetic: false },
+        },
+        promiseGuardAiMitigationOutputSchema,
+      ),
+    ).rejects.toMatchObject({
+      code: "INVALID_PROVIDER_CONFIGURATION",
+      retryable: false,
+    });
+    expect(network).not.toHaveBeenCalled();
+  });
+
+  it("does not spend provider quota for a request already cancelled by the caller", async () => {
+    const network = vi.fn();
+    const provider = new AmdTokenFactoryProvider({
+      apiKey: syntheticAmdKey,
+      fetch: network,
+    });
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      provider.generateStructured(
+        amdRequest,
+        promiseGuardAiMitigationOutputSchema,
+        controller.signal,
+      ),
+    ).rejects.toMatchObject({ code: "TIMEOUT", retryable: true });
+    expect(network).not.toHaveBeenCalled();
+  });
+
+  it("normalizes rate limits without leaking credentials or provider bodies", async () => {
+    const provider = new AmdTokenFactoryProvider({
+      apiKey: syntheticAmdKey,
+      fetch: async () =>
+        new Response(`upstream diagnostic ${syntheticAmdKey}`, {
+          status: 429,
+          headers: { "retry-after": "4" },
+        }),
+    });
+
+    const operation = provider.generateStructured(
+      amdRequest,
+      promiseGuardAiMitigationOutputSchema,
+    );
+
+    await expect(operation).rejects.toMatchObject({
+      code: "RATE_LIMITED",
+      message: "AMD Token Factory rate limit was reached.",
+      retryable: true,
+    });
+    await expect(operation).rejects.not.toThrow(syntheticAmdKey);
+    await expect(operation).rejects.not.toThrow("upstream diagnostic");
+  });
+
+  it.each([400, 401, 403])(
+    "treats HTTP %s as non-retryable provider configuration without leaking details",
+    async (status) => {
+      const provider = new AmdTokenFactoryProvider({
+        apiKey: syntheticAmdKey,
+        fetch: async () =>
+          new Response(`credential rejected ${syntheticAmdKey}`, { status }),
+      });
+
+      const operation = provider.generateStructured(
+        amdRequest,
+        promiseGuardAiMitigationOutputSchema,
+      );
+
+      await expect(operation).rejects.toMatchObject({
+        code: "INVALID_PROVIDER_CONFIGURATION",
+        message: "AMD Token Factory rejected the provider configuration.",
+        retryable: false,
+      });
+      await expect(operation).rejects.not.toThrow(syntheticAmdKey);
+      await expect(operation).rejects.not.toThrow("credential rejected");
+    },
+  );
+
+  it("fails closed when the model returns malformed structured output", async () => {
+    const provider = new AmdTokenFactoryProvider({
+      apiKey: syntheticAmdKey,
+      fetch: async () =>
+        Response.json({
+          id: "amd-response-002",
+          model: "self-dploy/DeepSeek-V4-Flash",
+          choices: [
+            {
+              finish_reason: "stop",
+              message: { role: "assistant", content: "not-json" },
+            },
+          ],
+        }),
+    });
+
+    await expect(
+      provider.generateStructured(
+        amdRequest,
+        promiseGuardAiMitigationOutputSchema,
+      ),
+    ).rejects.toMatchObject({
+      code: "MALFORMED_OUTPUT",
+      retryable: false,
+    });
+  });
+
+  it("allows the documented model enough time while retaining a bounded timeout", async () => {
+    vi.useFakeTimers();
+    const provider = new AmdTokenFactoryProvider({
+      apiKey: syntheticAmdKey,
+      fetch: async (_input, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener(
+            "abort",
+            () => reject(new DOMException("Aborted", "AbortError")),
+            { once: true },
+          );
+        }),
+    });
+    let state: "pending" | "resolved" | "rejected" = "pending";
+    const operation = provider
+      .generateStructured(amdRequest, promiseGuardAiMitigationOutputSchema)
+      .then(
+        (result) => {
+          state = "resolved";
+          return result;
+        },
+        (error: unknown) => {
+          state = "rejected";
+          throw error;
+        },
+      );
+    const rejection = expect(operation).rejects.toMatchObject({
+      code: "TIMEOUT",
+      retryable: true,
+    });
+
+    await vi.advanceTimersByTimeAsync(20_000);
+    expect(state).toBe("pending");
+    await vi.advanceTimersByTimeAsync(40_000);
+    await rejection;
+  });
+});
+
 describe("runtime provider configuration", () => {
   it("accepts explicit disabled mode in production", () => {
     expect(
@@ -138,11 +402,33 @@ describe("runtime provider configuration", () => {
     );
   });
 
-  it("rejects unactivated AMD without falling back to mock", () => {
+  it("initializes AMD for a controlled local demonstration", () => {
+    expect(
+      initializeInferenceFromEnvironment({
+        AMD_TOKEN_FACTORY_API_KEY: syntheticAmdKey,
+        INFERENCE_PROVIDER: "amd-token-factory",
+        NODE_ENV: "development",
+      }),
+    ).toBeInstanceOf(AmdTokenFactoryProvider);
+  });
+
+  it("rejects a missing AMD credential without falling back to mock", () => {
     expect(() =>
       initializeInferenceFromEnvironment({
         INFERENCE_PROVIDER: "amd-token-factory",
         NODE_ENV: "development",
+      }),
+    ).toThrowError(
+      expect.objectContaining({ code: "LIVE_PROVIDER_NOT_ACTIVATED" }),
+    );
+  });
+
+  it("keeps AMD denied in production pending public access control approval", () => {
+    expect(() =>
+      initializeInferenceFromEnvironment({
+        AMD_TOKEN_FACTORY_API_KEY: syntheticAmdKey,
+        INFERENCE_PROVIDER: "amd-token-factory",
+        NODE_ENV: "production",
       }),
     ).toThrowError(
       expect.objectContaining({ code: "LIVE_PROVIDER_NOT_ACTIVATED" }),
